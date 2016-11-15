@@ -1,0 +1,8 @@
+pkg/
+coverage/
+rdoc/
+tmp/
+
+.DS_Store
+.idea
+
