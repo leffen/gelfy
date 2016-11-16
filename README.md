@@ -5,7 +5,7 @@ Modification done by leffen :-)
 
 This is the new GELF gem written by Alexey Palazhchenko. It is based on the old gem by Lennart Koopmann and allows you to send GELF messages to Graylog2 server instances. See [http://www.graylog2.org/about/gelf](http://www.graylog2.org/about/gelf) for more information about GELF and [http://rdoc.info/github/Graylog2/gelf-rb/master/frames](http://rdoc.info/github/Graylog2/gelf-rb/master/frames) for API documentation.
 
-Tested with Ruby 1.9, 2.0, 2.1, 2.2 and 2.3.
+Tested with Ruby 2.3.
 
 ![](https://travis-ci.org/Graylog2/gelf-rb.png?branch=master)
 

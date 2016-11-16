@@ -2,7 +2,8 @@ require 'gelfy/transport/udp'
 require 'gelfy/transport/tcp'
 
 module GELFY
-  # Graylog2 notifier.
+
+
   class Notifier
     # Maximum number of GELF chunks as per GELF spec
     MAX_CHUNKS = 128
@@ -32,10 +33,10 @@ module GELFY
     end
 
     def create_sender
-      GELF::Transport::TCP.new([[host, port]]) if self.default_options['protocol'] == GELF::Protocol::TCP
-      GELF::Transport::UDP.new([[host, port]]) if self.default_options['protocol'] == GELF::Protocol::UDP
-      GELF::Transport::Rabbit.new(*@args) if self.default_options['protocol'] == GELF::Protocol::RABBIT
-      GELF::Transport::Redis.new(*@args) if self.default_options['protocol'] == GELF::Protocol::REDIS
+      GELFY::Transport::TCP.new([[host, port]]) if self.default_options['protocol'] == GELF::Protocol::TCP
+      GELFY::Transport::UDP.new([[host, port]]) if self.default_options['protocol'] == GELF::Protocol::UDP
+      GELFY::Transport::Rabbit.new(*@args) if self.default_options['protocol'] == GELF::Protocol::RABBIT
+      GELFY::Transport::Redis.new(*@args) if self.default_options['protocol'] == GELF::Protocol::REDIS
     end
 
     # Get a list of receivers.
@@ -131,7 +132,7 @@ module GELFY
       notify_with_level!(nil, *args)
     end
 
-    GELF::Levels.constants.each do |const|
+    GELFY::Levels.constants.each do |const|
       class_eval <<-EOT, __FILE__, __LINE__ + 1
         def #{const.downcase}(*args)                          # def debug(*args)
           notify_with_level(GELF::#{const}, *args)            #   notify_with_level(GELF::DEBUG, *args)

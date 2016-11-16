@@ -14,7 +14,6 @@ Gem::Specification.new do |s|
     "README.md"
   ]
   s.files = [
-    ".gemtest",
     "CHANGELOG",
     "CONTRIBUTING.md",
     "Gemfile",
@@ -23,22 +22,20 @@ Gem::Specification.new do |s|
     "README.md",
     "Rakefile",
     "VERSION",
-    "gelf.gemspec",
-    "lib/gelf.rb",
-    "lib/gelf/logger.rb",
-    "lib/gelf/notifier.rb",
-    "lib/gelf/ruby_sender.rb",
-    "lib/gelf/severity.rb"
+    "gelfy.gemspec",
+    "lib/gelfy.rb",
+    "lib/gelfy/logger.rb",
+    "lib/gelfy/notifier.rb",
+    "lib/gelfy/severity.rb"
   ]
   s.homepage = "http://github.com/leffen/gelfy"
   s.licenses = ["MIT"]
   s.rubygems_version = "2.4.5.1"
   s.summary = "Library to send GELF messages to a que to be consumed by Graylog"
 
-  if s.respond_to? :specification_version then
-    s.specification_version = 4
-    s.add_runtime_dependency(%q<json>, [">= 0"])
-
-  end
+  s.add_runtime_dependency(%q<json>, [">= 0"])
+  s.add_runtime_dependency(%q<redis>, [">= 0"])
+  s.add_runtime_dependency(%q<bunny>, [">= 0"])
+  s.add_runtime_dependency(%q<oj>, [">= 0"])
 end
 
