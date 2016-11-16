@@ -22,8 +22,8 @@ SHORT_HASH = { 'short_message' => 'message' }
 LONG_HASH  = { 'short_message' => 'message', 'long_message' => k3_message }
 
 
-notifier_lan = GELF::Notifier.new(TARGET_HOST, TARGET_PORT, 'LAN', DEFAULT_OPTIONS)
-notifier_wan = GELF::Notifier.new(TARGET_HOST, TARGET_PORT, 'WAN', DEFAULT_OPTIONS)
+notifier_lan = GELFY::Notifier.new(TARGET_HOST, TARGET_PORT, 'LAN', DEFAULT_OPTIONS)
+notifier_wan = GELFY::Notifier.new(TARGET_HOST, TARGET_PORT, 'WAN', DEFAULT_OPTIONS)
 
 # to create mongo collections, etc.
 notifier_lan.notify!(LONG_HASH)

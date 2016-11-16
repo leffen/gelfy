@@ -8,7 +8,7 @@ module GELFY
       def initialize(addresses)
         @sockets = []
         addresses.each do |address|
-          s = GELF::Transport::TCPSocket.new(address[0], address[1])
+          s = GELFY::Transport::TCPSocket.new(address[0], address[1])
           @sockets.push(s)
         end
       end
@@ -24,7 +24,7 @@ module GELFY
             end
           end
           if not found
-            s = GELF::Transport::TCPSocket.new(address[0], address[1])
+            s = GELFY::Transport::TCPSocket.new(address[0], address[1])
             @sockets.push(s)
           end
         end

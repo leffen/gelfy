@@ -24,7 +24,7 @@ module GELFY
         @default_options = {}
         @default_options['version'] = "1.1"
         @default_options['host'] ||= Socket.gethostname
-        @default_options['level'] ||= GELF::UNKNOWN
+        @default_options['level'] ||= GELFY::UNKNOWN
         @default_options['facility'] ||= 'RabbitNotifier'
 
       end

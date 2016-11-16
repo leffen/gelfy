@@ -7,6 +7,7 @@ module GELFY
   class Notifier
     # Maximum number of GELF chunks as per GELF spec
     MAX_CHUNKS = 128
+    SPEC_VERSION = '1.0'
 
     attr_accessor :enabled, :collect_file_and_line, :rescue_network_errors
     attr_reader :max_chunk_size, :level, :default_options, :level_mapping
@@ -23,9 +24,9 @@ module GELFY
       self.default_options = default_options
       self.default_options['version'] = SPEC_VERSION
       self.default_options['host'] ||= Socket.gethostname
-      self.default_options['level'] ||= GELF::UNKNOWN
+      self.default_options['level'] ||= GELFY::UNKNOWN
       self.default_options['facility'] ||= 'gelf-rb'
-      self.default_options['protocol'] ||= GELF::Protocol::UDP
+      self.default_options['protocol'] ||= GELFY::Protocol::UDP
 
       @sender = create_sender
 
@@ -33,10 +34,10 @@ module GELFY
     end
 
     def create_sender
-      GELFY::Transport::TCP.new([[host, port]]) if self.default_options['protocol'] == GELF::Protocol::TCP
-      GELFY::Transport::UDP.new([[host, port]]) if self.default_options['protocol'] == GELF::Protocol::UDP
-      GELFY::Transport::Rabbit.new(*@args) if self.default_options['protocol'] == GELF::Protocol::RABBIT
-      GELFY::Transport::Redis.new(*@args) if self.default_options['protocol'] == GELF::Protocol::REDIS
+      GELFY::Transport::TCP.new([[host, port]]) if self.default_options['protocol'] == GELFY::Protocol::TCP
+      GELFY::Transport::UDP.new([[host, port]]) if self.default_options['protocol'] == GELFY::Protocol::UDP
+      GELFY::Transport::Rabbit.new(*@args) if self.default_options['protocol'] == GELFY::Protocol::RABBIT
+      GELFY::Transport::Redis.new(*@args) if self.default_options['protocol'] == GELFY::Protocol::REDIS
     end
 
     # Get a list of receivers.
@@ -91,9 +92,9 @@ module GELFY
     def level_mapping=(mapping)
       case mapping.to_s.downcase
         when 'logger'
-          @level_mapping = GELF::LOGGER_MAPPING
+          @level_mapping = GELFY::LOGGER_MAPPING
         when 'direct'
-          @level_mapping = GELF::DIRECT_MAPPING
+          @level_mapping = GELFY::DIRECT_MAPPING
         else
           @level_mapping = mapping
       end
@@ -135,7 +136,7 @@ module GELFY
     GELFY::Levels.constants.each do |const|
       class_eval <<-EOT, __FILE__, __LINE__ + 1
         def #{const.downcase}(*args)                          # def debug(*args)
-          notify_with_level(GELF::#{const}, *args)            #   notify_with_level(GELF::DEBUG, *args)
+          notify_with_level(GELFY::#{const}, *args)            #   notify_with_level(GELFY::DEBUG, *args)
         end                                                   # end
       EOT
     end
@@ -146,7 +147,7 @@ module GELFY
     rescue SocketError, SystemCallError
       raise unless self.rescue_network_errors
     rescue Exception => exception
-      notify_with_level!(GELF::UNKNOWN, exception)
+      notify_with_level!(GELFY::UNKNOWN, exception)
     end
 
     def notify_with_level!(message_level, *args)
@@ -156,13 +157,12 @@ module GELFY
       extract_hash(*args)
       @hash['level'] = message_level unless message_level.nil?
       if @hash['level'] >= level
-        if self.default_options['protocol'] == GELF::Protocol::TCP
-          validate_hash
-          puts "Sending TCP #{@hash} "
-          @sender.send(@hash.to_json + "\0")
-        else
+        if self.default_options['protocol'] == GELFY::Protocol::UDP
           puts "Sending UDP #{@hash} "
           @sender.send_datagrams(datagrams_from_hash)
+        else
+          validate_hash
+          @sender.send(@hash.to_json + "\0")
         end
       end
     end
@@ -171,10 +171,10 @@ module GELFY
       primary_data = if object.respond_to?(:to_hash)
                        object.to_hash
                      elsif object.is_a?(Exception)
-                       args['level'] ||= GELF::ERROR
+                       args['level'] ||= GELFY::ERROR
                        self.class.extract_hash_from_exception(object)
                      else
-                       args['level'] ||= GELF::INFO
+                       args['level'] ||= GELFY::INFO
                        { 'short_message' => object.to_s }
                      end
 

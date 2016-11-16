@@ -39,11 +39,11 @@ module GELFY
     GELFY::Levels.constants.each do |const|
       class_eval <<-EOT, __FILE__, __LINE__ + 1
         def #{const.downcase}(progname = nil, &block)   # def debug(progname = nil, &block)
-          add(GELF::#{const}, nil, progname, &block)    #   add(GELF::DEBUG, nil, progname, &block)
+          add(GELFY::#{const}, nil, progname, &block)    #   add(GELFY::DEBUG, nil, progname, &block)
         end                                             # end
 
         def #{const.downcase}?                          # def debug?
-          GELF::#{const} >= level                       #   GELF::DEBUG >= level
+          GELFY::#{const} >= level                       #   GELFY::DEBUG >= level
         end                                             # end
       EOT
     end
