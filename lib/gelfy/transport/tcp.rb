@@ -1,4 +1,4 @@
-require 'gelf/transport/tcp_socket'
+require 'gelfy/transport/tcp_socket'
 
 module GELFY
   module Transport

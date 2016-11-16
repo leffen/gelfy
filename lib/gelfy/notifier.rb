@@ -1,7 +1,5 @@
-require 'gelf/transport/udp'
-require 'gelf/transport/tcp'
-
-require 'pp'
+require 'gelfy/transport/udp'
+require 'gelfy/transport/tcp'
 
 module GELFY
   # Graylog2 notifier.
@@ -12,15 +10,12 @@ module GELFY
     attr_accessor :enabled, :collect_file_and_line, :rescue_network_errors
     attr_reader :max_chunk_size, :level, :default_options, :level_mapping
 
-    # +host+ and +port+ are host/ip and port of graylog2-server.
-    # +max_size+ is passed to max_chunk_size=.
-    # +default_options+ is used in notify!
     def initialize(host = 'localhost', port = 12201, max_size = 'WAN', default_options = {})
       @enabled = true
       @collect_file_and_line = true
       @random = Random.new
 
-      self.level = GELF::DEBUG
+      self.level = GELFY::DEBUG
       self.max_chunk_size = max_size
       self.rescue_network_errors = false
 
@@ -31,14 +26,16 @@ module GELFY
       self.default_options['facility'] ||= 'gelf-rb'
       self.default_options['protocol'] ||= GELF::Protocol::UDP
 
-      if self.default_options['protocol'] == GELF::Protocol::TCP
-        puts "Gelf>Connecting #{host} #{port} TCP"
-        @sender = GELF::Transport::TCP.new([[host, port]])
-      else
-        puts "Gelf>Connecting #{host} #{port} UDP"
-        @sender = GELF::Transport::UDP.new([[host, port]])
-      end
+      @sender = create_sender
+
       self.level_mapping = :logger
+    end
+
+    def create_sender
+      GELF::Transport::TCP.new([[host, port]]) if self.default_options['protocol'] == GELF::Protocol::TCP
+      GELF::Transport::UDP.new([[host, port]]) if self.default_options['protocol'] == GELF::Protocol::UDP
+      GELF::Transport::Rabbit.new(*@args) if self.default_options['protocol'] == GELF::Protocol::RABBIT
+      GELF::Transport::Redis.new(*@args) if self.default_options['protocol'] == GELF::Protocol::REDIS
     end
 
     # Get a list of receivers.

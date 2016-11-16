@@ -36,7 +36,7 @@ module GELFY
     end
 
     # Redefines methods in +Notifier+.
-    GELF::Levels.constants.each do |const|
+    GELFY::Levels.constants.each do |const|
       class_eval <<-EOT, __FILE__, __LINE__ + 1
         def #{const.downcase}(progname = nil, &block)   # def debug(progname = nil, &block)
           add(GELF::#{const}, nil, progname, &block)    #   add(GELF::DEBUG, nil, progname, &block)
@@ -49,15 +49,11 @@ module GELFY
     end
 
     def <<(message)
-      notify_with_level(GELF::UNKNOWN, 'short_message' => message)
+      notify_with_level(GELFY::UNKNOWN, 'short_message' => message)
     end
 
   end
 
-  # Graylog2 notifier, compatible with Ruby Logger.
-  # You can use it with Rails like this:
-  #     config.logger = GELF::Logger.new("localhost", 12201, "WAN", { :facility => "appname" })
-  #     config.colorize_logging = false
   class Logger < Notifier
     include LoggerCompatibility
   end
